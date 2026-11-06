@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PR1 Studio</title>
+<link rel="stylesheet" href="/style.css">
+<script type="module" src="/app.js?v=2"></script>
+</head>
+<body>
+<header>
+  <a class="mark" href="#viewer">PR1 <span>Studio</span></a>
+  <nav>
+    <a href="#motions">Motions</a>
+    <a href="#retarget">YouTube</a>
+    <a href="#train">Train</a>
+    <a href="#stack">How RP1 learns</a>
+    <a href="https://github.com/willnien10005914/pr1_urdf" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+</header>
+<p id="banner" class="banner" hidden></p>
+<main>
+  <section class="stage">
+    <div class="block">
+      <h1>Review the RP1 URDF</h1>
+      <p class="lede">Search a joint, drag its limit, or play a published reference. The mesh is the RoboParty description; the motion is not a new policy weight.</p>
+      <div id="models" class="models"></div>
+    </div>
+    <div id="viewer"></div>
+    <div class="transport">
+      <button id="play" type="button">Play</button>
+      <button id="stop" class="ghost" type="button">Stand</button>
+      <input id="scrub" type="range" min="0" max="0" value="0" disabled>
+      <span id="frame-label">No clip</span>
+    </div>
+  </section>
+  <aside class="panel">
+    <div class="joint-head">
+      <h2>Joints</h2>
+      <span id="joint-count"></span>
+    </div>
+    <label><span>Search</span><input id="joint-search" type="search" placeholder="knee, wrist, hip…"></label>
+    <div id="joints"></div>
+  </aside>
+
+  <section id="motions" class="wide">
+    <h2>Published references</h2>
+    <p class="lede">These clips ship in <a href="https://github.com/Roboparty/roboparty_train">roboparty_train</a>. Walk and stair climb are AMP demonstrations. Wave and dance are BeyondMimic clips. A backflip is not in that pack.</p>
+    <div id="motion-cards" class="cards"></div>
+  </section>
+
+  <section id="retarget" class="wide">
+    <h2>YouTube interval → RP1</h2>
+    <p class="lede">Same path as RoboParty’s HHTools flow: cut the seconds, estimate SMPL or SMPL-X with GVHMR, retarget onto the 24-DoF body. The result is a joint CSV you can play here. It is not a trained PPO policy.</p>
+    <form id="youtube-form" class="grid">
+      <label><span>YouTube URL</span><input id="youtube-url" type="url" required placeholder="https://www.youtube.com/watch?v=…"></label>
+      <label><span>Name</span><input id="youtube-title" type="text" maxlength="80" placeholder="front flip study"></label>
+      <label><span>Start second</span><input id="youtube-start" type="number" min="0" step="0.1" value="0"></label>
+      <label><span>End second</span><input id="youtube-end" type="number" min="0.5" step="0.1" value="4"></label>
+      <label><span>Body model</span>
+        <select id="youtube-reference"><option value="smplx">SMPL-X</option><option value="smpl">SMPL</option></select>
+      </label>
+      <div class="actions"><button type="submit">Retarget this interval</button></div>
+    </form>
+    <iframe id="youtube-preview" title="YouTube preview" hidden></iframe>
+    <details>
+      <summary>Already have an HHTools CSV?</summary>
+      <form id="csv-form">
+        <label><span>Robot CSV</span><textarea id="csv-text" placeholder="# sample_rate: 50&#10;time,root_x,…,dof_left_hip_pitch_joint"></textarea></label>
+        <button type="submit">Play this CSV</button>
+      </form>
+    </details>
+    <p id="status" role="status"></p>
+  </section>
+
+  <section id="train" class="wide">
+    <h2>Retrain a published task</h2>
+    <p class="lede">Parameters start from the agent configs in roboparty_train. Practice length is short so a log and ETA can appear. The published budget is the number in those files. This machine runs the job only when the roboparty_train environment exists.</p>
+    <form id="train-form" class="grid">
+      <label><span>Task</span><select id="task"></select></label>
+      <label><span>Physics</span>
+        <select id="physics"><option value="newton_mjwarp">MJWarp (default)</option><option value="isaacsim_physx">Isaac Sim PhysX</option></select>
+      </label>
+      <label><span>Parallel envs</span><input id="num_envs" type="number" min="1" max="8192" step="1"></label>
+      <label><span>Iterations</span><input id="max_iterations" type="number" min="1" max="30000" step="1"></label>
+      <label><span>Learning rate</span><input id="learning_rate" type="number" min="0.000001" max="0.1" step="0.0001"></label>
+      <label><span>Entropy coef</span><input id="entropy_coef" type="number" min="0" max="0.1" step="0.001"></label>
+      <label><span>Steps / env</span><input id="num_steps_per_env" type="number" min="1" max="256" step="1"></label>
+      <label><span>Clip</span><input id="clip_param" type="number" min="0.01" max="0.5" step="0.01"></label>
+      <label><span>Gamma</span><input id="gamma" type="number" min="0.9" max="0.999" step="0.001"></label>
+      <label><span>Seed</span><input id="seed" type="number" min="0" step="1"></label>
+      <div class="actions">
+        <button id="use-practice" class="ghost" type="button">Practice length</button>
+        <button id="use-published" class="ghost" type="button">Published budget</button>
+        <button type="submit">Start training</button>
+      </div>
+    </form>
+    <p id="task-note" class="note"></p>
+    <div class="stats">
+      <div><span>Stage</span><b id="job-stage">—</b></div>
+      <div><span>ETA</span><b id="job-eta">—</b></div>
+      <div><span>Iteration</span><b id="job-iter">—</b></div>
+      <div><span>Reward</span><b id="job-reward">—</b></div>
+    </div>
+    <progress id="job-progress" value="0" max="1"></progress>
+    <pre id="job-log"></pre>
+    <div id="job-list"></div>
+  </section>
+
+  <section id="stack" class="wide">
+    <h2>How this robot is trained</h2>
+    <div id="stack-steps" class="stack"></div>
+  </section>
+</main>
+</body>
+</html>

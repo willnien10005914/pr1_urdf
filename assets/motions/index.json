@@ -1,0 +1,44 @@
+{
+  "motions": [
+    {
+      "id": "walk",
+      "title": "Walk",
+      "task": "RP1-AMP",
+      "kind": "amp_reference",
+      "summary": "Neutral forward walk used as an AMP demonstration. This is the reference trajectory, not a saved PPO checkpoint.",
+      "fps": 30.0,
+      "frames": 333,
+      "source_file": "robolab/data/motions/rp1_amp/neutral_walk_ff_180_R_002__A534.pkl"
+    },
+    {
+      "id": "climb",
+      "title": "Climb stairs",
+      "task": "RP1-AMP",
+      "kind": "amp_reference",
+      "summary": "Stair-climb start clip from the AMP motion pack. Parkour training (RP1-Parkour) learns terrain; this clip is the kinematic reference.",
+      "fps": 30.0,
+      "frames": 179,
+      "source_file": "robolab/data/motions/rp1_amp/stairs_climbing_up_start_R_001__A300.pkl"
+    },
+    {
+      "id": "wave",
+      "title": "Wave",
+      "task": "RP1-BeyondMimic",
+      "kind": "beyondmimic_reference",
+      "summary": "BeyondMimic wave clip shipped with roboparty_train. Tracking this motion is what RP1-BeyondMimic optimizes.",
+      "fps": 25.0,
+      "frames": 109,
+      "source_file": "robolab/data/motions/rp1_bm/wave_R_001__A428.npz"
+    },
+    {
+      "id": "dance",
+      "title": "Dance",
+      "task": "RP1-BeyondMimic",
+      "kind": "beyondmimic_reference",
+      "summary": "Smoothed dance reference at the BeyondMimic export rate. A backflip is not in this open motion pack.",
+      "fps": 25.0,
+      "frames": 3287,
+      "source_file": "robolab/data/motions/rp1_bm/dance1_subject2_smooth6hz.npz"
+    }
+  ]
+}
