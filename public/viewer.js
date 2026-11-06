@@ -125,7 +125,10 @@ export function createViewer(container) {
     robot.updateMatrixWorld(true);
     plantFeet();
     fit();
+    status.textContent = '';
     status.hidden = true;
+    container.dataset.ready = 'true';
+    container.dataset.meshes = String(results.filter(Boolean).length);
     return jointStates();
   }
 
