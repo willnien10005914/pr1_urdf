@@ -2,40 +2,40 @@
   "motions": [
     {
       "id": "walk",
-      "title": "Walk",
+      "title": "走路",
       "task": "RP1-AMP",
       "kind": "amp_reference",
-      "summary": "Neutral forward walk used as an AMP demonstration. This is the reference trajectory, not a saved PPO checkpoint.",
+      "summary": "中性向前走，當作 AMP 示範。這是參考軌跡，不是存下來的 PPO 權重。",
       "fps": 30.0,
       "frames": 333,
       "source_file": "robolab/data/motions/rp1_amp/neutral_walk_ff_180_R_002__A534.pkl"
     },
     {
       "id": "climb",
-      "title": "Climb stairs",
+      "title": "爬樓梯",
       "task": "RP1-AMP",
       "kind": "amp_reference",
-      "summary": "Stair-climb start clip from the AMP motion pack. Parkour training (RP1-Parkour) learns terrain; this clip is the kinematic reference.",
+      "summary": "AMP 動作包裡爬樓梯的起手片段。跑酷訓練學的是地形；這段是運動學參考。",
       "fps": 30.0,
       "frames": 179,
       "source_file": "robolab/data/motions/rp1_amp/stairs_climbing_up_start_R_001__A300.pkl"
     },
     {
       "id": "wave",
-      "title": "Wave",
+      "title": "揮手",
       "task": "RP1-BeyondMimic",
       "kind": "beyondmimic_reference",
-      "summary": "BeyondMimic wave clip shipped with roboparty_train. Tracking this motion is what RP1-BeyondMimic optimizes.",
+      "summary": "roboparty_train 附的 BeyondMimic 揮手片段。RP1-BeyondMimic 要追的就是這段動作。",
       "fps": 25.0,
       "frames": 109,
       "source_file": "robolab/data/motions/rp1_bm/wave_R_001__A428.npz"
     },
     {
       "id": "dance",
-      "title": "Dance",
+      "title": "跳舞",
       "task": "RP1-BeyondMimic",
       "kind": "beyondmimic_reference",
-      "summary": "Smoothed dance reference at the BeyondMimic export rate. A backflip is not in this open motion pack.",
+      "summary": "依 BeyondMimic 輸出頻率平滑過的跳舞參考。這個公開資料包裡沒有後空翻。",
       "fps": 25.0,
       "frames": 3287,
       "source_file": "robolab/data/motions/rp1_bm/dance1_subject2_smooth6hz.npz"

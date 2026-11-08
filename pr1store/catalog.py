@@ -12,26 +12,26 @@ ROBOTS = (
     {
         "id": "rp1_24dof",
         "file": "urdf/rp1_24dof.urdf",
-        "title": "24-DoF body",
-        "summary": "The configuration roboparty_train actually trains: 6 DoF per leg, 2-DoF waist, 5-DoF arms.",
+        "title": "24 自由度身體",
+        "summary": "roboparty_train 實際在訓的配置：每條腿 6 自由度、腰 2 自由度、手臂各 5 自由度。",
     },
     {
         "id": "rp1",
         "file": "urdf/rp1.urdf",
-        "title": "28-DoF body",
-        "summary": "Same legs and waist, with a 3-axis wrist on each arm. Deployment config exists; the default policy pack is still 24-DoF.",
+        "title": "28 自由度身體",
+        "summary": "腿和腰相同，每隻手臂多一顆三軸手腕。部署配置存在，預設策略包仍是 24 自由度。",
     },
     {
         "id": "rp1_hand",
         "file": "urdf/rp1_hand.urdf",
-        "title": "Body + RP Hand",
-        "summary": "Movable hand joints from rp1_hand.urdf. Finger motion is outside the locomotion PPO tasks.",
+        "title": "身體 + RP 手",
+        "summary": "rp1_hand.urdf 裡可動的手指關節。手指動作不在行走 PPO 任務裡。",
     },
     {
         "id": "rp1_hand_fixed",
         "file": "urdf/rp1_hand_fixed.urdf",
-        "title": "Hands fixed",
-        "summary": "Hand links present, finger joints locked. Useful for checking the arm chain without driving every finger.",
+        "title": "手部固定",
+        "summary": "保留手部連桿，手指關節鎖住。用來檢查手臂鏈，不必逐一驅動手指。",
     },
 )
 
@@ -41,9 +41,9 @@ ROBOTS = (
 TASKS = (
     {
         "id": "RP1-Flat",
-        "title": "Flat walk",
-        "family": "velocity PPO",
-        "learns": "Commanded walking and standing on flat ground.",
+        "title": "平地行走",
+        "family": "速度 PPO",
+        "learns": "在平地上依照指令走路和站立。",
         "defaults": {
             "num_envs": 4096,
             "max_iterations": 9001,
@@ -58,9 +58,9 @@ TASKS = (
     },
     {
         "id": "RP1-Rough",
-        "title": "Rough ground",
-        "family": "velocity PPO",
-        "learns": "The same velocity policy on uneven terrain.",
+        "title": "崎嶇地面",
+        "family": "速度 PPO",
+        "learns": "同一套速度策略，改在不平整的地面上。",
         "defaults": {
             "num_envs": 4096,
             "max_iterations": 9001,
@@ -75,9 +75,9 @@ TASKS = (
     },
     {
         "id": "RP1-AMP",
-        "title": "AMP style",
-        "family": "adversarial motion prior",
-        "learns": "A discriminator reward that pulls the policy toward the AMP clips (walk, stairs, turns).",
+        "title": "AMP 風格",
+        "family": "對抗式動作先驗",
+        "learns": "用判別器報酬把策略拉向 AMP 片段（走路、樓梯、轉身）。",
         "defaults": {
             "num_envs": 4096,
             "max_iterations": 5000,
@@ -93,8 +93,8 @@ TASKS = (
     {
         "id": "RP1-BeyondMimic",
         "title": "BeyondMimic",
-        "family": "motion tracking",
-        "learns": "Whole-body tracking of one retargeted clip, such as wave or dance.",
+        "family": "動作追蹤",
+        "learns": "全身追蹤一段重定向後的片段，例如揮手或跳舞。",
         "defaults": {
             "num_envs": 4096,
             "max_iterations": 8000,
@@ -109,9 +109,9 @@ TASKS = (
     },
     {
         "id": "RP1-Ballet",
-        "title": "Ballet balance",
-        "family": "motion tracking",
-        "learns": "All eight saved ballet poses, starting from the opening stand. Each pose is held until it is balanced, then the next one is shown. A pose that never settles is still followed by the next, so training cannot stay on the first step.",
+        "title": "芭蕾平衡",
+        "family": "動作追蹤",
+        "learns": "從始站開始學完八個已存的芭蕾姿勢。每個姿勢先站穩再進下一個；若一直站不穩，仍會在時限後進到下一步，所以訓練不會停在第一步。",
         "defaults": {
             "num_envs": 2048,
             "max_iterations": 12000,
@@ -126,9 +126,9 @@ TASKS = (
     },
     {
         "id": "RP1-Parkour",
-        "title": "Parkour climb",
-        "family": "perceptive locomotion",
-        "learns": "Stairs, gaps, and obstacles from depth. This is the climb-up task, not a single canned flip.",
+        "title": "跑酷攀爬",
+        "family": "感知行走",
+        "learns": "用深度圖學習樓梯、缺口和障礙。這是向上攀爬的任務，不是一段預錄的空翻。",
         "defaults": {
             "num_envs": 4096,
             "max_iterations": 30000,
@@ -146,28 +146,28 @@ TASKS = (
 STACK = [
     {
         "step": 1,
-        "title": "Video in, body model out",
-        "body": "A YouTube interval is cut with yt-dlp and ffmpeg. GVHMR estimates an SMPL or SMPL-X pose sequence. Those body-model weights stay on this machine; they are licensed separately and are not part of this repository.",
+        "title": "影片進去，身體模型出來",
+        "body": "用 yt-dlp 和 ffmpeg 裁切一段 YouTube。GVHMR 估計 SMPL 或 SMPL-X 的姿勢序列。身體模型權重留在這台電腦上，授權分開，不在這個儲存庫裡。",
     },
     {
         "step": 2,
-        "title": "HHTools retarget",
-        "body": "human-humanoid-tools runs Newton IK onto the RP1 URDF and writes a robot CSV (time, root pose, dof_*). SMPL-X is the default calibration reference; SMPL is the other shipped choice.",
+        "title": "HHTools 重定向",
+        "body": "human-humanoid-tools 用 Newton IK 對到 RP1 的 URDF，寫出機器人 CSV（時間、根姿勢、dof_*）。預設對的是 SMPL-X，另一個選項是 SMPL。",
     },
     {
         "step": 3,
-        "title": "Training-format motion",
-        "body": "roboparty_train converts that CSV with convert_motion.py: AMP demonstrations at 120 Hz (.pkl) or BeyondMimic tracking clips at 50 Hz (.npz).",
+        "title": "訓練用的動作格式",
+        "body": "roboparty_train 用 convert_motion.py 把 CSV 轉成訓練格式：AMP 示範是 120 Hz 的 .pkl，BeyondMimic 追蹤片段是 50 Hz 的 .npz。",
     },
     {
         "step": 4,
-        "title": "Isaac Lab 3 PPO",
-        "body": "RSL-RL trains RP1-Flat, RP1-Rough, RP1-AMP, RP1-BeyondMimic, or RP1-Parkour. The published commands use MJWarp by default and PhysX when you select it. The web bar reads Learning iteration from the live log.",
+        "title": "Isaac Lab 3 的 PPO",
+        "body": "RSL-RL 訓練 RP1-Flat、RP1-Rough、RP1-AMP、RP1-BeyondMimic、RP1-Ballet 或 RP1-Parkour。公開指令預設用 MJWarp，也可以改選 PhysX。網頁上的進度條讀的是即時日誌裡的 Learning iteration。",
     },
     {
         "step": 5,
-        "title": "What you can play today",
-        "body": "This checkout has the official reference clips (walk, stair climb, wave, dance) and no released model_*.pt. The viewer plays those references on the URDF. A new checkpoint appears only after a worker run finishes.",
+        "title": "現在可以播什麼",
+        "body": "這裡有官方參考片段（走路、爬樓梯、揮手、跳舞），也有訓完的八步芭蕾權重 checkpoints/rp1_ballet_balance/2026-11-08_05-02-50/model_11999.pt。檢視器把參考動作和這份策略的錄影播在 URDF 上。",
     },
 ]
 
@@ -240,11 +240,11 @@ def public_catalog() -> dict:
         "description": {
             "upstream": UPSTREAM,
             "commit": upstream_commit(),
-            "note": "24-DoF is the trained body. 30-DoF and 42-DoF in the RP1 overview count a 2-DoF head and two 6-axis hands; those extra modules are not separate URDFs in this snapshot.",
+            "note": "實際訓練的是 24 自由度身體。RP1 總覽裡的 30 和 42 自由度還算進 2 自由度的頭和兩隻 6 軸手；那些額外模組在這份快照裡沒有獨立的 URDF。",
         },
         "flip": {
             "available": False,
-            "title": "Backflip / front flip",
-            "summary": "RoboParty publishes a front-flip clip on the RP1 overview. The open motion pack in roboparty_train does not include a flip trajectory or a flip checkpoint. Retarget a flip video, then train RP1-BeyondMimic on that CSV.",
+            "title": "後空翻 / 前空翻",
+            "summary": "RoboParty 在 RP1 總覽公開過前空翻片段。roboparty_train 的公開動作包沒有空翻軌跡，也沒有空翻權重。要研究的話，先重定向一段空翻影片，再對那份 CSV 訓練 RP1-BeyondMimic。",
         },
     }

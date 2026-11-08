@@ -1,20 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PR1 Studio</title>
-<link rel="stylesheet" href="/style.css?v=20">
-<script type="module" src="/app.js?v=20"></script>
+<link rel="stylesheet" href="/style.css?v=21">
+<script type="module" src="/app.js?v=21"></script>
 </head>
 <body>
 <header>
   <a class="mark" href="#viewer">PR1 <span>Studio</span></a>
   <nav>
-    <a href="#motions">Motions</a>
+    <a href="#motions">動作</a>
     <a href="#retarget">YouTube</a>
-    <a href="#train">Train</a>
-    <a href="#stack">How RP1 learns</a>
+    <a href="#train">訓練</a>
+    <a href="#stack">RP1 怎麼學</a>
     <a href="https://github.com/willnien10005914/pr1_urdf" target="_blank" rel="noopener">GitHub</a>
   </nav>
 </header>
@@ -33,17 +33,17 @@
   <section class="stage">
     <div class="block">
       <div id="stage-intro">
-        <h1>Review the RP1 URDF</h1>
-        <p class="lede">Search a joint, drag its limit, or play a published reference. The mesh is the RoboParty description; the motion is not a new policy weight.</p>
+        <h1>查看 RP1 的 URDF</h1>
+        <p class="lede">搜尋關節、拖動活動範圍，或播放已發布的參考動作。網格是 RoboParty 的機體；畫面上的動作不是一份新的策略權重。</p>
       </div>
       <div id="models" class="models"></div>
     </div>
     <div id="viewer"></div>
     <div class="transport">
-      <button id="play" type="button">Play</button>
-      <button id="stop" class="ghost" type="button">Stand</button>
+      <button id="play" type="button">播放</button>
+      <button id="stop" class="ghost" type="button">站立</button>
       <input id="scrub" type="range" min="0" max="0" value="0" disabled>
-      <span id="frame-label">No clip</span>
+      <span id="frame-label">尚無片段</span>
     </div>
   </section>
   <aside class="panel">
@@ -62,10 +62,10 @@
       <p id="step-note" class="note">始站是雙手放下的站立。調完每個步驟再儲存，最後一步是收尾。</p>
     </div>
     <div class="joint-head">
-      <h2>Joints</h2>
+      <h2>關節</h2>
       <span id="joint-count"></span>
     </div>
-    <label><span>Search</span><input id="joint-search" type="search" placeholder="knee, wrist, hip…"></label>
+    <label><span>搜尋</span><input id="joint-search" type="search" placeholder="膝、腕、髖…"></label>
     <div id="joints"></div>
   </aside>
   <div id="studio-split" class="studio-split" title="拖曳調整左右寬度"></div>
@@ -82,30 +82,30 @@
   <div class="work">
 
   <section id="motions" class="wide">
-    <h2>Published references</h2>
-    <p class="lede">These clips ship in <a href="https://github.com/Roboparty/roboparty_train">roboparty_train</a>. Walk and stair climb are AMP demonstrations. Wave and dance are BeyondMimic clips. A backflip is not in that pack.</p>
+    <h2>已發布的參考動作</h2>
+    <p class="lede">這些片段來自 <a href="https://github.com/Roboparty/roboparty_train">roboparty_train</a>。走路和爬樓梯是 AMP 示範，揮手和跳舞是 BeyondMimic 片段。那個公開資料包裡沒有後空翻。</p>
     <div id="motion-cards" class="cards"></div>
   </section>
 
   <section id="retarget" class="wide">
-    <h2>YouTube interval → RP1</h2>
-    <p class="lede">Same path as RoboParty’s HHTools flow: cut the seconds, estimate SMPL or SMPL-X with GVHMR, retarget onto the 24-DoF body. The result is a joint CSV you can play here. It is not a trained PPO policy.</p>
+    <h2>YouTube 時段 → RP1</h2>
+    <p class="lede">和 RoboParty 的 HHTools 同一條路：裁切秒數，用 GVHMR 估計 SMPL 或 SMPL-X，再重定向到 24 自由度的身體。結果是可以在這裡播放的關節 CSV，不是訓練好的 PPO 策略。</p>
     <form id="youtube-form" class="grid">
-      <label><span>YouTube URL</span><input id="youtube-url" type="url" required placeholder="https://www.youtube.com/watch?v=…"></label>
-      <label><span>Name</span><input id="youtube-title" type="text" maxlength="80" placeholder="front flip study"></label>
-      <label><span>Start second</span><input id="youtube-start" type="number" min="0" step="0.1" value="0"></label>
-      <label><span>End second</span><input id="youtube-end" type="number" min="0.5" step="0.1" value="4"></label>
-      <label><span>Body model</span>
+      <label><span>YouTube 網址</span><input id="youtube-url" type="url" required placeholder="https://www.youtube.com/watch?v=…"></label>
+      <label><span>名稱</span><input id="youtube-title" type="text" maxlength="80" placeholder="前空翻研究"></label>
+      <label><span>開始秒</span><input id="youtube-start" type="number" min="0" step="0.1" value="0"></label>
+      <label><span>結束秒</span><input id="youtube-end" type="number" min="0.5" step="0.1" value="4"></label>
+      <label><span>身體模型</span>
         <select id="youtube-reference"><option value="smplx">SMPL-X</option><option value="smpl">SMPL</option></select>
       </label>
-      <div class="actions"><button type="submit">Retarget this interval</button></div>
+      <div class="actions"><button type="submit">重定向這一段</button></div>
     </form>
-    <iframe id="youtube-preview" title="YouTube preview" hidden></iframe>
+    <iframe id="youtube-preview" title="YouTube 預覽" hidden></iframe>
     <details>
-      <summary>Already have an HHTools CSV?</summary>
+      <summary>已經有 HHTools 的 CSV？</summary>
       <form id="csv-form">
-        <label><span>Robot CSV</span><textarea id="csv-text" placeholder="# sample_rate: 50&#10;time,root_x,…,dof_left_hip_pitch_joint"></textarea></label>
-        <button type="submit">Play this CSV</button>
+        <label><span>機器人 CSV</span><textarea id="csv-text" placeholder="# sample_rate: 50&#10;time,root_x,…,dof_left_hip_pitch_joint"></textarea></label>
+        <button type="submit">播放這份 CSV</button>
       </form>
     </details>
     <p id="status" role="status"></p>
@@ -116,34 +116,34 @@
       <img alt="目前三隻訓練中的機器人，以及要學的手腳軌跡">
       <figcaption>訓練畫面載入中。</figcaption>
     </figure>
-    <h2>Retrain a published task</h2>
-    <p class="lede">When the retarget looks right, choose BeyondMimic, pick that clip, then press Start training. Practice length is a short run. The job stays on this computer after the page or the tunnel closes. Open the site again and this list still shows the progress and the finished run.</p>
+    <h2>再訓練一個已發布的任務</h2>
+    <p class="lede">重定向看起來正確之後，選擇 BeyondMimic、選要追的片段，再按開始訓練。練習長度是一次短跑。工作留在這台電腦上，關掉頁面或通道不會停。再次打開網站，這份清單仍會顯示進度和完成的結果。</p>
     <form id="train-form" class="grid">
-      <label><span>Task</span><select id="task"></select></label>
-      <label id="track-clip-label"><span>Clip to track</span><select id="track-clip"></select></label>
-      <label><span>Physics</span>
-        <select id="physics"><option value="newton_mjwarp">MJWarp (default)</option><option value="isaacsim_physx">Isaac Sim PhysX</option></select>
+      <label><span>任務</span><select id="task"></select></label>
+      <label id="track-clip-label"><span>要追的片段</span><select id="track-clip"></select></label>
+      <label><span>物理</span>
+        <select id="physics"><option value="newton_mjwarp">MJWarp（預設）</option><option value="isaacsim_physx">Isaac Sim PhysX</option></select>
       </label>
-      <label><span>Parallel envs</span><input id="num_envs" type="number" min="1" max="8192" step="1"></label>
-      <label><span>Iterations</span><input id="max_iterations" type="number" min="1" max="30000" step="1"></label>
-      <label><span>Learning rate</span><input id="learning_rate" type="number" min="0.000001" max="0.1" step="0.0001"></label>
-      <label><span>Entropy coef</span><input id="entropy_coef" type="number" min="0" max="0.1" step="0.001"></label>
-      <label><span>Steps / env</span><input id="num_steps_per_env" type="number" min="1" max="256" step="1"></label>
-      <label><span>Clip</span><input id="clip_param" type="number" min="0.01" max="0.5" step="0.01"></label>
+      <label><span>平行環境數</span><input id="num_envs" type="number" min="1" max="8192" step="1"></label>
+      <label><span>迭代</span><input id="max_iterations" type="number" min="1" max="30000" step="1"></label>
+      <label><span>學習率</span><input id="learning_rate" type="number" min="0.000001" max="0.1" step="0.0001"></label>
+      <label><span>熵係數</span><input id="entropy_coef" type="number" min="0" max="0.1" step="0.001"></label>
+      <label><span>每環境步數</span><input id="num_steps_per_env" type="number" min="1" max="256" step="1"></label>
+      <label><span>裁切</span><input id="clip_param" type="number" min="0.01" max="0.5" step="0.01"></label>
       <label><span>Gamma</span><input id="gamma" type="number" min="0.9" max="0.999" step="0.001"></label>
-      <label><span>Seed</span><input id="seed" type="number" min="0" step="1"></label>
+      <label><span>種子</span><input id="seed" type="number" min="0" step="1"></label>
       <div class="actions">
-        <button id="use-practice" class="ghost" type="button">Practice length</button>
-        <button id="use-published" class="ghost" type="button">Published budget</button>
-        <button type="submit">Start training</button>
+        <button id="use-practice" class="ghost" type="button">練習長度</button>
+        <button id="use-published" class="ghost" type="button">公開預算</button>
+        <button type="submit">開始訓練</button>
       </div>
     </form>
     <p id="task-note" class="note"></p>
     <div class="stats">
-      <div><span>Stage</span><b id="job-stage">—</b></div>
-      <div><span>ETA</span><b id="job-eta">—</b></div>
-      <div><span>Iteration</span><b id="job-iter">—</b></div>
-      <div><span>Reward</span><b id="job-reward">—</b></div>
+      <div><span>階段</span><b id="job-stage">—</b></div>
+      <div><span>剩餘時間</span><b id="job-eta">—</b></div>
+      <div><span>迭代</span><b id="job-iter">—</b></div>
+      <div><span>報酬</span><b id="job-reward">—</b></div>
     </div>
     <progress id="job-progress" value="0" max="1"></progress>
     <div class="actions">
@@ -158,7 +158,7 @@
   </section>
 
   <section id="stack" class="wide">
-    <h2>How this robot is trained</h2>
+    <h2>RP1 是怎麼訓練的</h2>
     <div id="stack-steps" class="stack"></div>
   </section>
   </div>

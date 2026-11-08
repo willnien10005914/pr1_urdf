@@ -129,9 +129,9 @@ function paintJob(job) {
   $('job-reward').textContent = metrics.mean_reward === undefined ? '—' : Number(metrics.mean_reward).toFixed(3);
   $('job-progress').value = job.percent || 0;
   if (job.state === 'complete' && job.has_motion && job.kind === 'train') {
-    $('job-log').textContent = `${job.title} is ready. The viewer is playing the trained PPO policy from Isaac Lab.`;
+    $('job-log').textContent = `${job.title} 可以播放。檢視器正在播 Isaac Lab 裡訓好的 PPO 策略。`;
   } else if (job.state === 'complete' && job.has_motion) {
-    $('job-log').textContent = `${job.title} is ready to play in the viewer. This clip is a retargeted joint motion, not a PPO policy.`;
+    $('job-log').textContent = `${job.title} 可以在檢視器播放。這是重定向後的關節動作，不是 PPO 策略。`;
   } else {
     $('job-log').textContent = job.log_tail || '';
     if (job.error) say(job.error);
@@ -204,7 +204,7 @@ async function boot() {
   if (!caps.gpu) missing.push('NVIDIA GPU');
   if (missing.length) {
     $('banner').hidden = false;
-    $('banner').textContent = `Viewer and reference clips work. These are not ready for a new run: ${missing.join(', ')}.`;
+    $('banner').textContent = `檢視器和參考片段可以用。這些還沒備好，不能開新的訓練：${missing.join('、')}。`;
   }
   const models = $('models');
   for (const robot of catalog.robots) {
@@ -230,7 +230,7 @@ async function boot() {
   }
   const flip = document.createElement('article');
   flip.className = 'card';
-  flip.innerHTML = `<strong>${catalog.flip.title}</strong><em>not in the open pack</em><p>${catalog.flip.summary}</p>`;
+  flip.innerHTML = `<strong>${catalog.flip.title}</strong><em>不在公開資料包</em><p>${catalog.flip.summary}</p>`;
   cards.append(flip);
   const task = $('task');
   for (const item of catalog.tasks) {
@@ -244,9 +244,9 @@ async function boot() {
     const tracking = selected.id === 'RP1-BeyondMimic' || selected.id === 'RP1-Ballet';
     $('track-clip-label').hidden = !tracking;
     const clipNote = tracking
-      ? ' Start training tracks the clip selected above. The run keeps going on this computer if the tunnel closes.'
-      : ' This task trains locomotion, not the YouTube clip.';
-    $('task-note').textContent = `${selected.learns} Published run: ${selected.defaults.max_iterations} iterations, ${selected.defaults.num_envs} envs, lr ${selected.defaults.learning_rate}.${clipNote}`;
+      ? ' 開始訓練會追上面選的片段。通道關掉之後，這次訓練仍在這台電腦上繼續。'
+      : ' 這個任務在學行走，不是在追 YouTube 片段。';
+    $('task-note').textContent = `${selected.learns} 公開預算：${selected.defaults.max_iterations} 次迭代、${selected.defaults.num_envs} 個環境、學習率 ${selected.defaults.learning_rate}。${clipNote}`;
   };
   task.addEventListener('change', () => { fillTask(currentTask().practice); describe(); });
   fillTask(currentTask().practice);
