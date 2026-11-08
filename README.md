@@ -12,9 +12,9 @@
 
 ## 訓好的芭蕾
 
-下面這段是八步芭蕾 PPO 在 Isaac Lab 裡錄下來的前約 6 秒，播在 RoboParty 的 URDF 上。它是策略滾出來的結果，不是參考軌跡本身。
+下面這段是八步芭蕾 PPO 在 Isaac Lab 裡錄下來的約 10 秒，鏡頭從正面看 RoboParty 的 URDF。它是策略滾出來的結果，不是參考軌跡本身。
 
-![八步芭蕾 PPO 的錄影：從站立進到抬腿和伸手](docs/ballet-ppo.gif)
+![八步芭蕾 PPO 的錄影：正面看完約十秒的動作](docs/ballet-ppo.gif)
 
 權重在 `checkpoints/rp1_ballet_balance/2026-11-08_05-02-50/model_11999.pt`。同一資料夾的 `track.npz` 是它追的參考，`params/agent.yaml` 是當時的 RSL-RL 設定。
 

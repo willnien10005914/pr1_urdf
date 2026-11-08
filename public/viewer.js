@@ -113,7 +113,7 @@ export function createViewer(container) {
     const center = bounds.getCenter(new THREE.Vector3());
     controls.target.set(center.x, center.y, bounds.min.z + size.z * 0.45);
     const distance = Math.max(size.z, size.x) / (2 * Math.tan(camera.fov * Math.PI / 360) * 0.7);
-    camera.position.copy(controls.target).add(new THREE.Vector3(1.1, -1.7, 0.55).normalize().multiplyScalar(distance));
+    camera.position.copy(controls.target).add(new THREE.Vector3(1, 0, 0.22).normalize().multiplyScalar(distance));
     controls.update();
   }
 
