@@ -63,6 +63,39 @@ export function createViewer(container) {
     }
   }
 
+  function soleHeight(name) {
+    const link = (robot.links && robot.links[name]) || robot.getObjectByName(name);
+    if (!link) return Number.POSITIVE_INFINITY;
+    const box = new THREE.Box3().setFromObject(link);
+    return box.isEmpty() ? Number.POSITIVE_INFINITY : box.min.z;
+  }
+
+  function correctStance(com = {}) {
+    if (!robot) return { support: 'none' };
+    const x = Number.isFinite(Number(com.x)) ? Number(com.x) : 0;
+    const y = Number.isFinite(Number(com.y)) ? Number(com.y) : 0;
+    robot.position.x = x;
+    robot.position.y = y;
+    robot.updateMatrixWorld(true);
+    const left = soleHeight('left_ankle_roll_link');
+    const right = soleHeight('right_ankle_roll_link');
+    let lowest = Math.min(left, right);
+    if (!Number.isFinite(lowest)) {
+      const bounds = new THREE.Box3().setFromObject(robot);
+      lowest = bounds.min.z;
+    }
+    if (Number.isFinite(lowest)) robot.position.z -= lowest;
+    robot.updateMatrixWorld(true);
+    const planted = Math.min(soleHeight('left_ankle_roll_link'), soleHeight('right_ankle_roll_link'));
+    const gap = Math.abs(left - right);
+    const support = !Number.isFinite(Math.min(left, right))
+      ? 'none'
+      : gap < 0.012 ? 'both' : (left <= right ? 'left' : 'right');
+    container.dataset.support = support;
+    container.dataset.sole = Number.isFinite(planted) ? planted.toFixed(4) : '';
+    return { support };
+  }
+
   function plantFeet() {
     robot.updateMatrixWorld(true);
     const bounds = new THREE.Box3().setFromObject(robot);
@@ -139,6 +172,11 @@ export function createViewer(container) {
     const joints = {};
     motion.joint_names.forEach((name, column) => { joints[name] = motion.q[index][column]; });
     setJoints(joints);
+    if (motion.plant_feet) {
+      robot.quaternion.identity();
+      correctStance({ x: root[0] - origin[0], y: root[1] - origin[1] });
+      return;
+    }
     robot.position.set(root[0] - origin[0], root[1] - origin[1], (root[2] - origin[2]) + plant);
     robot.quaternion.set(root[4], root[5], root[6], root[3]);
   }
@@ -156,6 +194,7 @@ export function createViewer(container) {
     load,
     jointStates,
     setJoints,
+    correctStance,
     showFrame,
     resetPose() {
       if (!robot) return;

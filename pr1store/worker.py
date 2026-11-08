@@ -202,6 +202,40 @@ class Worker:
             )
             return
         config = job["config"]
+        env = os.environ.copy()
+        clip_id = str(config.get("clip_id") or "")
+        if config["task"] in {"RP1-BeyondMimic", "RP1-Ballet"} and clip_id:
+            csv_path = self.store.directory(clip_id) / "rp1.csv"
+            if not csv_path.is_file():
+                self.store.update(
+                    job_id, state="failed", stage_label="Failed",
+                    error="That retarget has no CSV yet. Play a finished clip, then start training again.",
+                )
+                return
+            npz_path = self.store.directory(job_id) / "track.npz"
+            converter = root / "robolab" / "scripts" / "tools" / "hhtools" / "convert_motion.py"
+            self.store.update(job_id, state="starting_isaac", stage_label="Converting the clip", percent=0.04)
+            code = self._stream(
+                job_id,
+                [str(python), str(converter), "--robot", "rp1", "-f", str(csv_path), "-o", str(npz_path)],
+                cwd=root,
+                env=env,
+                on_line=lambda line: None,
+            )
+            if self._cancelled(job_id):
+                return
+            if code != 0 or not npz_path.is_file():
+                tail = self.store.log_tail(job_id, 12)
+                self.store.update(
+                    job_id, state="failed", stage_label="Failed",
+                    error=tail.splitlines()[-1] if tail else "Could not convert the retarget CSV.",
+                )
+                return
+            env["PR1_MOTION_FILE"] = str(npz_path.resolve())
+        env["PR1_PREVIEW_DIR"] = str(self.store.directory(job_id))
+        env["PR1_STEPS_PER_ENV"] = str(config["num_steps_per_env"])
+        env["PR1_MAX_ITERATIONS"] = str(config["max_iterations"])
+        env["PR1_PREVIEW_EVERY"] = "50"
         overrides = {
             "learning_rate": config["learning_rate"],
             "entropy_coef": config["entropy_coef"],
@@ -211,7 +245,6 @@ class Worker:
         }
         script = self.store.root / "scripts" / "train_pr1_job.py"
         cmd = [str(python), str(script), *train_argv(config)]
-        env = os.environ.copy()
         env["PR1_PPO_OVERRIDES"] = json.dumps(overrides)
         origin = self.store.clock()
         self.store.update(job_id, state="starting_isaac", stage_label=STAGES["starting_isaac"], percent=0.08)

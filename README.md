@@ -9,7 +9,21 @@ The learning path follows [RP1](https://github.com/Roboparty/RP1) and [roboparty
 3. [human-humanoid-tools](https://github.com/Roboparty/human-humanoid-tools) retargets onto the 24-DoF body.
 4. Isaac Lab 3 and RSL-RL train `RP1-Flat`, `RP1-Rough`, `RP1-AMP`, `RP1-BeyondMimic`, or `RP1-Parkour`.
 
-The viewer plays reference trajectories from `roboparty_train` (walk, stair climb, wave, dance). That checkout does not include a released `model_*.pt`, and the open motion pack does not include a backflip. A front flip is a published RP1 demo, not a file you can load as a policy here. To study one, retarget a clip and train BeyondMimic.
+The viewer plays reference trajectories from `roboparty_train` (walk, stair climb, wave, dance). The open motion pack does not include a backflip. A front flip is a published RP1 demo, not a file you can load as a policy here. To study one, retarget a clip and train BeyondMimic.
+
+The eight-pose ballet policy from the 12000-iteration `RP1-Ballet` run is checked in:
+
+`checkpoints/rp1_ballet_balance/2026-11-08_05-02-50/model_11999.pt`
+
+`track.npz` in that folder is the reference it tracked. `params/agent.yaml` is the RSL-RL config (`entropy_coef` 0.005, 2048 envs, seed 42). Play it with the roboparty_train interpreter:
+
+```bash
+PR1_MOTION_FILE=checkpoints/rp1_ballet_balance/2026-11-08_05-02-50/track.npz \
+PR1_PLAY_OUTPUT=/tmp/ballet_motion.json \
+~/projects/roboparty_train/.venv/bin/python scripts/play_pr1_job.py \
+  --task=RP1-Ballet --num_envs=1 --viz=none \
+  --checkpoint=checkpoints/rp1_ballet_balance/2026-11-08_05-02-50/model_11999.pt
+```
 
 ## Run
 

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PR1 Studio</title>
-<link rel="stylesheet" href="/style.css">
-<script type="module" src="/app.js?v=2"></script>
+<link rel="stylesheet" href="/style.css?v=20">
+<script type="module" src="/app.js?v=20"></script>
 </head>
 <body>
 <header>
@@ -20,10 +20,22 @@
 </header>
 <p id="banner" class="banner" hidden></p>
 <main>
+  <div class="workspace">
+  <div id="studio" class="studio">
+    <div class="studio-bar" title="浮動時可從這裡或上緣拖曳">
+      <span>URDF</span>
+      <button id="toggle-intro" class="ghost" type="button" aria-expanded="true">收合說明</button>
+      <button id="viewer-smaller" class="ghost" type="button">縮小</button>
+      <button id="viewer-larger" class="ghost" type="button">放大</button>
+      <button id="viewer-layout" class="ghost" type="button" aria-pressed="false">直向</button>
+      <button id="viewer-float" class="ghost" type="button">浮動視窗</button>
+    </div>
   <section class="stage">
     <div class="block">
-      <h1>Review the RP1 URDF</h1>
-      <p class="lede">Search a joint, drag its limit, or play a published reference. The mesh is the RoboParty description; the motion is not a new policy weight.</p>
+      <div id="stage-intro">
+        <h1>Review the RP1 URDF</h1>
+        <p class="lede">Search a joint, drag its limit, or play a published reference. The mesh is the RoboParty description; the motion is not a new policy weight.</p>
+      </div>
       <div id="models" class="models"></div>
     </div>
     <div id="viewer"></div>
@@ -35,6 +47,20 @@
     </div>
   </section>
   <aside class="panel">
+    <div class="steps">
+      <div class="joint-head">
+        <h2>芭蕾</h2>
+      </div>
+      <div id="step-buttons" class="models"></div>
+      <label class="com"><span>重心前後</span><input id="com-x" type="range" min="-0.25" max="0.25" step="0.005" value="0"></label>
+      <label class="com"><span>重心左右</span><input id="com-y" type="range" min="-0.25" max="0.25" step="0.005" value="0"></label>
+      <p id="support-note" class="note">拖關節時會把較低的那一腳貼回地面。</p>
+      <div class="actions">
+        <button id="step-save" type="button">儲存這個姿勢</button>
+        <button id="step-play" class="ghost" type="button">重播整段</button>
+      </div>
+      <p id="step-note" class="note">始站是雙手放下的站立。調完每個步驟再儲存，最後一步是收尾。</p>
+    </div>
     <div class="joint-head">
       <h2>Joints</h2>
       <span id="joint-count"></span>
@@ -42,6 +68,18 @@
     <label><span>Search</span><input id="joint-search" type="search" placeholder="knee, wrist, hip…"></label>
     <div id="joints"></div>
   </aside>
+  <div id="studio-split" class="studio-split" title="拖曳調整左右寬度"></div>
+  <div class="studio-edge n" data-edge="n"></div>
+  <div class="studio-edge s" data-edge="s"></div>
+  <div class="studio-edge e" data-edge="e"></div>
+  <div class="studio-edge w" data-edge="w"></div>
+  <div class="studio-edge ne" data-edge="ne"></div>
+  <div class="studio-edge nw" data-edge="nw"></div>
+  <div class="studio-edge se" data-edge="se"></div>
+  <div class="studio-edge sw" data-edge="sw"></div>
+  </div>
+  <div id="portrait-split" class="portrait-split" title="拖曳調整 URDF 高度"></div>
+  <div class="work">
 
   <section id="motions" class="wide">
     <h2>Published references</h2>
@@ -74,10 +112,15 @@
   </section>
 
   <section id="train" class="wide">
+    <figure id="learn-monitor" class="learn-monitor" hidden>
+      <img alt="目前三隻訓練中的機器人，以及要學的手腳軌跡">
+      <figcaption>訓練畫面載入中。</figcaption>
+    </figure>
     <h2>Retrain a published task</h2>
-    <p class="lede">Parameters start from the agent configs in roboparty_train. Practice length is short so a log and ETA can appear. The published budget is the number in those files. This machine runs the job only when the roboparty_train environment exists.</p>
+    <p class="lede">When the retarget looks right, choose BeyondMimic, pick that clip, then press Start training. Practice length is a short run. The job stays on this computer after the page or the tunnel closes. Open the site again and this list still shows the progress and the finished run.</p>
     <form id="train-form" class="grid">
       <label><span>Task</span><select id="task"></select></label>
+      <label id="track-clip-label"><span>Clip to track</span><select id="track-clip"></select></label>
       <label><span>Physics</span>
         <select id="physics"><option value="newton_mjwarp">MJWarp (default)</option><option value="isaacsim_physx">Isaac Sim PhysX</option></select>
       </label>
@@ -103,6 +146,13 @@
       <div><span>Reward</span><b id="job-reward">—</b></div>
     </div>
     <progress id="job-progress" value="0" max="1"></progress>
+    <div class="actions">
+      <button id="watch-train" class="ghost" type="button">看目前學習</button>
+    </div>
+    <figure id="train-preview" hidden>
+      <img alt="Three training robots and the hand and foot paths they are learning">
+      <figcaption></figcaption>
+    </figure>
     <pre id="job-log"></pre>
     <div id="job-list"></div>
   </section>
@@ -111,6 +161,8 @@
     <h2>How this robot is trained</h2>
     <div id="stack-steps" class="stack"></div>
   </section>
+  </div>
+  </div>
 </main>
 </body>
 </html>

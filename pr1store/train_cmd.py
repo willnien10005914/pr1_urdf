@@ -39,6 +39,9 @@ def clamp_config(raw: dict) -> dict:
     physics = str(merged.get("physics") or "newton_mjwarp")
     if physics not in PHYSICS:
         raise ValueError("physics must be newton_mjwarp or isaacsim_physx")
+    clip_id = str(raw.get("clip_id") or "")
+    if clip_id and not clip_id.isalnum():
+        raise ValueError("clip_id must be a job id")
     return {
         "task": task,
         "physics": physics,
@@ -51,6 +54,7 @@ def clamp_config(raw: dict) -> dict:
         "gamma": real("gamma", 0.9, 0.999),
         "seed": integer("seed", 0, 2**31 - 1),
         "practice": bool(raw.get("practice")),
+        "clip_id": clip_id,
     }
 
 

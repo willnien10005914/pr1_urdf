@@ -12,6 +12,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
+from pr1store.ballet_steps import load_document, replay_motion, save_step
 from pr1store.catalog import public_catalog
 from pr1store.csv_motion import CsvMotionError, motion_from_hhtools_csv
 from pr1store.jobs import JobStore
@@ -89,6 +90,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(index)
             if path.startswith("/api/motions/"):
                 return self._motion(path.removeprefix("/api/motions/"))
+            if path == "/api/ballet-steps":
+                return self._json(load_document(self.store.data_dir))
+            if path == "/api/ballet-steps/replay":
+                return self._json(replay_motion(load_document(self.store.data_dir)))
             if path == "/api/jobs":
                 return self._json({"jobs": [public_job(job, self.store) for job in self.store.list_jobs()]})
             if path.startswith("/api/jobs/"):
@@ -104,6 +109,15 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:
         path = unquote(urlsplit(self.path).path)
         try:
+            if path.startswith("/api/ballet-steps/"):
+                step_id = path.removeprefix("/api/ballet-steps/").strip("/")
+                length = int(self.headers.get("Content-Length") or 0)
+                if length <= 0 or length > MAX_BODY:
+                    raise ValueError("JSON body is missing or too large")
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                return self._json(save_step(
+                    self.store.data_dir, step_id, payload.get("joints") or {}, payload.get("com"),
+                ))
             if path == "/api/jobs":
                 return self._create_job()
             if path.endswith("/cancel") and path.startswith("/api/jobs/"):
@@ -173,6 +187,18 @@ class Handler(BaseHTTPRequestHandler):
                 raise KeyError(job_id)
             self._bytes(path.read_bytes(), "application/json")
             return
+        if extra == "preview.gif":
+            path = self.store.directory(job_id) / "preview.gif"
+            if not path.is_file():
+                raise KeyError(job_id)
+            self._bytes(path.read_bytes(), "image/gif", cache="no-store")
+            return
+        if extra == "preview.json":
+            path = self.store.directory(job_id) / "preview.json"
+            if not path.is_file():
+                raise KeyError(job_id)
+            self._bytes(path.read_bytes(), "application/json", cache="no-store")
+            return
         if extra:
             raise KeyError(extra)
         self._json(public_job(self.store.get(job_id), self.store))
@@ -209,10 +235,12 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def _bytes(self, body: bytes, mime: str) -> None:
+    def _bytes(self, body: bytes, mime: str, cache: str = "") -> None:
         self.send_response(200)
         self.send_header("Content-Type", mime)
         self.send_header("Content-Length", str(len(body)))
+        if cache:
+            self.send_header("Cache-Control", cache)
         self.end_headers()
         self.wfile.write(body)
 

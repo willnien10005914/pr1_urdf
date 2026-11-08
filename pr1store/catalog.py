@@ -108,6 +108,23 @@ TASKS = (
         "practice": {"num_envs": 64, "max_iterations": 20},
     },
     {
+        "id": "RP1-Ballet",
+        "title": "Ballet balance",
+        "family": "motion tracking",
+        "learns": "All eight saved ballet poses, starting from the opening stand. Each pose is held until it is balanced, then the next one is shown. A pose that never settles is still followed by the next, so training cannot stay on the first step.",
+        "defaults": {
+            "num_envs": 2048,
+            "max_iterations": 12000,
+            "learning_rate": 1.0e-3,
+            "entropy_coef": 0.003,
+            "num_steps_per_env": 24,
+            "clip_param": 0.2,
+            "gamma": 0.99,
+            "seed": 42,
+        },
+        "practice": {"num_envs": 64, "max_iterations": 20},
+    },
+    {
         "id": "RP1-Parkour",
         "title": "Parkour climb",
         "family": "perceptive locomotion",

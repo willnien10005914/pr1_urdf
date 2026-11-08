@@ -9,6 +9,10 @@ from __future__ import annotations
 import json
 import os
 import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 
 def install_overrides() -> None:
@@ -53,9 +57,31 @@ def install_overrides() -> None:
     trainer.cli_args.update_rsl_rl_cfg = update
 
 
+def install_motion_file() -> None:
+    """Point BeyondMimic at one retargeted clip when the studio asks for it."""
+    path = os.environ.get("PR1_MOTION_FILE", "")
+    if not path:
+        return
+    from robolab.tasks.manager_based.beyondmimic.rp1_beyondmimic_env_cfg import (
+        RP1BeyondMimicEnvCfg,
+    )
+
+    original = RP1BeyondMimicEnvCfg.__post_init__
+
+    def post_init(self):
+        original(self)
+        self.commands.motion.motion_file = path
+
+    RP1BeyondMimicEnvCfg.__post_init__ = post_init
+
+
 if __name__ == "__main__":
     install_overrides()
     import robolab.tasks  # noqa: F401
+    from pr1store.ballet_task import register
+
+    register()
+    install_motion_file()
     from isaaclab_rl.entrypoints.backends.train_rsl_rl import run
 
     run(sys.argv[1:])
